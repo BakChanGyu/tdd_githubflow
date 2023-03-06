@@ -19,18 +19,19 @@ public class AppTest {
         assertThat(cmd).isEqualTo("안녕");
     }
 
-//    @Test
-//    @DisplayName("출력을 모니터에 하지 않고 문자열로 얻기")
-//    public void t2() {
-//        // System.out에 대한 화면출력 금지 시작
-//        ByteArrayOutputStream output = TestUtil.setOutToByteArray();
-//        System.out.println("안녕");
-//
-//        // 그 동안 출력되지 않던 내용들을 문자열로 반환
-//        String rs = output.toString();
-//
-//        TestUtil.clearSetOutToByteArray();
-//    }
+    @Test
+    @DisplayName("출력을 모니터에 하지 않고 문자열로 얻기")
+    public void t2() {
+        // System.out에 대한 화면출력 금지 시작
+        ByteArrayOutputStream output = TestUtil.setOutToByteArray();
+        System.out.println("안녕"); // 화면출력(x)
+
+        // 그 동안 출력되지 않던 내용들을 문자열로 반환
+        String rs = output.toString();
+        TestUtil.clearSetOutToByteArray(output); // 다시 원복
+
+        assertThat(rs).isEqualTo("안녕");
+    }
 //    // 테스트유틸 테스트 끝
 //
 //    // 앱 ㅔㅌ스트 시작
@@ -53,14 +54,50 @@ public class AppTest {
 //    }
 //
 //    @Test
-//    @DisplayName("잘못된 명령어 ㅇㅂ력에 대한 처리")
+//    @DisplayName("잘못된 명령어 입력에 대한 처리")
 //    public void t4() {
 //        Scanner sc = IestUtil.getScanner("""
 //                종료2
 //                종료
 //                """.stripIndent().trim());
 //        B
-//        assertThat
+//        assertThat(sc)
 //    }
+
+    @Test
+    @DisplayName("등록화면에서 명언과 작가를 입력받고 명언을 생성")
+    public void t5() {
+        String rs = AppTestRunner.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                """);
+
+        assertThat(rs)
+                .contains("명언 :")
+                .contains("작가 :")
+                .contains("1번 명언이 등록되었습니다.");
+    }
+
+    @Test
+    @DisplayName("명언이 등록될 떄 마다 생성되는 명언의 번호가 1씩 증가한다.")
+    public void t6() {
+        String rs = AppTestRunner.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                나의 죽음을 적들에게 알리지 마라.
+                이순신
+                등록
+                왼손은 거들뿐
+                강백호
+                """);
+
+        assertThat(rs)
+                .contains("1번 명언이 등록되었습니다.");
+                .contains("2번 명언이 등록되었습니다.");
+                .contains("3번 명언이 등록되었습니다.");
+    }
     // 앱 테스트 끝
 }
